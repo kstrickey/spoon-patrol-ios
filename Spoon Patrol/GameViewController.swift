@@ -1,50 +1,51 @@
 //
 //  GameViewController.swift
-//  Spoon Patrol
+//  Moon Patrol
 //
-//  Created by Kevin Trickey on 6/17/19.
-//  Copyright © 2019 Kevin Trickey. All rights reserved.
+//  Created by Kevin on 8/7/17.
+//  Copyright (c) 2017 Casual Programmer. All rights reserved.
 //
 
 import UIKit
 import SpriteKit
-import GameplayKit
 
 class GameViewController: UIViewController {
-
+    
+    var started = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let view = self.view as! SKView? {
-            // Load the SKScene from 'GameScene.sks'
-            if let scene = SKScene(fileNamed: "GameScene") {
-                // Set the scale mode to scale to fit the window
-                scene.scaleMode = .aspectFill
-                
-                // Present the scene
-                view.presentScene(scene)
-            }
-            
-            view.ignoresSiblingOrder = true
-            
-            view.showsFPS = true
-            view.showsNodeCount = true
+        if !started {
+            started = true
+            let scene = TitleScene(size: view.bounds.size)
+            let skView = view as! SKView
+            skView.showsPhysics = true
+            skView.ignoresSiblingOrder = true
+            scene.scaleMode = .resizeFill
+            skView.presentScene(scene)
         }
     }
-
-    override var shouldAutorotate: Bool {
+    
+    override var shouldAutorotate : Bool {
         return true
     }
-
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    
+    override var supportedInterfaceOrientations : UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
+            return .landscape
         } else {
             return .all
         }
     }
-
-    override var prefersStatusBarHidden: Bool {
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Release any cached data, images, etc that aren't in use.
+    }
+    
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }
+
