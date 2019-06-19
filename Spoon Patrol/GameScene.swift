@@ -60,6 +60,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let patroller: Patroller
     
+    let scoreboard: SKLabelNode
+    
     override init(size: CGSize) {
         if !AVAudioSession.sharedInstance().isOtherAudioPlaying {
             playingMusic = true
@@ -74,7 +76,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         patroller = Patroller()
         
-        lastTime = 0
+        lastTime = 0.0
+        totalTime = 0.0
+        
+        scoreboard = SKLabelNode(fontNamed: "Chalkduster")
         
         timeOfLastObstacle = minimumTimeBetweenObstacles
         likelihoodOfGroundObstacleSpawn = 0.3
@@ -111,6 +116,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ground.physicsBody!.pinned = true
         ground.physicsBody!.allowsRotation = false
         addChild(ground)
+        
+        // Scoreboard
+        scoreboard.fontSize = 25
+        scoreboard.fontColor = UIColor.black
+        scoreboard.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        scoreboard.verticalAlignmentMode = SKLabelVerticalAlignmentMode.bottom
+        scoreboard.position = CGPoint(x: 0, y: 0)
+        scoreboard.zPosition = CGFloat.greatestFiniteMagnitude
+        addChild(scoreboard)
         
         // Patroller
         patroller.begin(groundHeight: groundHeight)
@@ -163,6 +177,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     
+    var totalTime: CFTimeInterval
     var lastTime: CFTimeInterval
     
     var timeOfLastObstacle: CFTimeInterval
@@ -181,6 +196,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         let timeElapsed = currentTime - lastTime
+        totalTime += timeElapsed
+        
+        scoreboard.text = "   Meters patrolled: \(Double(round(10*totalTime)/10))"
         
         // If available, randomly spawn protruding obstacle
         if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
@@ -215,6 +233,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         lastTime = currentTime
         
     }
+    
     
     
     func youLose() {
