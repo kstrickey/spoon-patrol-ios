@@ -86,7 +86,7 @@ class FlyingPan: KTSpriteNode {
     
     func firePancake() {
         // Fires a pancake, if positioned appropriately
-        if self.position.x < self.scene!.size.width && self.position.x > self.size.width {
+        if self.position.x < self.scene!.size.width && self.position.x > self.size.width && self.position.y > (self.scene! as! GameScene).groundHeight + self.size.height * 2 && self.position.y < self.scene!.size.height {
             let pcb = PancakeBomb()
             self.scene!.addChild(pcb)
             pcb.spawnAt(position: self.position)

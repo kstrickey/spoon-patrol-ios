@@ -30,6 +30,8 @@
 		0A9E142322B8735B0039700D /* GroundObstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E142222B8735B0039700D /* GroundObstacle.swift */; };
 		0A9E142522BA8B490039700D /* PancakeBomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E142422BA8B490039700D /* PancakeBomb.swift */; };
 		0A9E142722BA91E80039700D /* Ground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E142622BA91E80039700D /* Ground.swift */; };
+		0A9E142922BAB21D0039700D /* C - Medium 12 Bar Blues Backing Track.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9E142822BAB21D0039700D /* C - Medium 12 Bar Blues Backing Track.mp3 */; };
+		0A9E142B22BAB4D10039700D /* happy happy game show.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 0A9E142A22BAB4D00039700D /* happy happy game show.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		0A9E142222B8735B0039700D /* GroundObstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroundObstacle.swift; sourceTree = "<group>"; };
 		0A9E142422BA8B490039700D /* PancakeBomb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PancakeBomb.swift; sourceTree = "<group>"; };
 		0A9E142622BA91E80039700D /* Ground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ground.swift; sourceTree = "<group>"; };
+		0A9E142822BAB21D0039700D /* C - Medium 12 Bar Blues Backing Track.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "C - Medium 12 Bar Blues Backing Track.mp3"; path = "Assets Prep/C - Medium 12 Bar Blues Backing Track.mp3"; sourceTree = SOURCE_ROOT; };
+		0A9E142A22BAB4D00039700D /* happy happy game show.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "happy happy game show.mp3"; path = "Assets Prep/happy happy game show.mp3"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +150,8 @@
 				0A9E141522B872550039700D /* FlyingPan.swift */,
 				0A9E142422BA8B490039700D /* PancakeBomb.swift */,
 				0A9E141C22B872EE0039700D /* blop.wav */,
+				0A9E142822BAB21D0039700D /* C - Medium 12 Bar Blues Backing Track.mp3 */,
+				0A9E142A22BAB4D00039700D /* happy happy game show.mp3 */,
 				0A9E141D22B872EE0039700D /* March of the Spoons.mp3 */,
 				0A9E13E722B7E2450039700D /* Assets.xcassets */,
 				0A9E13E422B7E2440039700D /* Main.storyboard */,
@@ -277,6 +283,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A9E142B22BAB4D10039700D /* happy happy game show.mp3 in Resources */,
 				0A9E141F22B872EE0039700D /* March of the Spoons.mp3 in Resources */,
 				0A9E13E622B7E2440039700D /* Main.storyboard in Resources */,
 				0A9E13DD22B7E2440039700D /* GameScene.sks in Resources */,
@@ -284,6 +291,7 @@
 				0A9E141E22B872EE0039700D /* blop.wav in Resources */,
 				0A9E13EB22B7E2450039700D /* LaunchScreen.storyboard in Resources */,
 				0A9E13DF22B7E2440039700D /* Actions.sks in Resources */,
+				0A9E142922BAB21D0039700D /* C - Medium 12 Bar Blues Backing Track.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

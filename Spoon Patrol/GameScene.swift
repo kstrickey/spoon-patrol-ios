@@ -70,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override init(size: CGSize) {
         if !AVAudioSession.sharedInstance().isOtherAudioPlaying {
             playingMusic = true
-            playBackgroundMusic("March of the Spoons.mp3")
+            playBackgroundMusic("happy happy game show.mp3")
         } else {
             playingMusic = false
         }
@@ -140,6 +140,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         patroller.begin(groundHeight: groundHeight)
         addChild(patroller)
         
+        // Instructions, disappear after a few seconds
+        let INSTRUC_HEIGHT = 40.0
+        let leftInstruc = SKSpriteNode(imageNamed: "tap left to jump")
+        let midInstruc = SKSpriteNode(imageNamed: "tilt to change speed")
+        let rightInstruc = SKSpriteNode(imageNamed: "tap right to fire spoon")
+        leftInstruc.setScale(CGFloat(INSTRUC_HEIGHT) / leftInstruc.size.height)
+        leftInstruc.anchorPoint = CGPoint(x: 0, y: 0.5)
+        leftInstruc.position = CGPoint(x: 15, y: size.height - leftInstruc.size.height*2)
+        midInstruc.setScale(CGFloat(INSTRUC_HEIGHT) / midInstruc.size.height)
+        midInstruc.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        midInstruc.position = CGPoint(x: size.width/2, y: size.height - midInstruc.size.height)
+        rightInstruc.setScale(CGFloat(INSTRUC_HEIGHT) / rightInstruc.size.height)
+        rightInstruc.anchorPoint = CGPoint(x: 1, y: 0.5)
+        rightInstruc.position = CGPoint(x: size.width - 15, y: size.height - rightInstruc.size.height*2)
+        for instruc in [leftInstruc, midInstruc, rightInstruc] {
+            instruc.zPosition = CGFloat.greatestFiniteMagnitude
+            addChild(instruc)
+            instruc.run(SKAction.sequence([SKAction.wait(forDuration: 5.0), SKAction.removeFromParent()]))
+        }
+        
         started = true
     }
     
@@ -191,7 +211,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var lastTime: CFTimeInterval
     
     var timeOfLastObstacle: CFTimeInterval
-    let minimumTimeBetweenObstacles = 1.0
+    let minimumTimeBetweenObstacles = 1.5
     let maximumTimeBetweenObstacles = 6.0
     
     var likelihoodOfGroundObstacleSpawn: Double     // between 0 and 1, units per second
@@ -212,7 +232,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Incorporate tilt
         if let accelerometerData = motionManager.accelerometerData {
-            tiltForce.dx = CGFloat(-accelerometerData.acceleration.y * 70.0)
+            tiltForce.dx = CGFloat(-accelerometerData.acceleration.y * 120.0)
         }
         patroller.run(SKAction.applyForce(tiltForce, duration: timeElapsed))
         
@@ -223,34 +243,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             patroller.position.x = self.size.width - patroller.size.width
         }
         
-        // If available, randomly spawn protruding obstacle
-        if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
-            let likelihood = likelihoodOfGroundObstacleSpawn * timeElapsed
-            if drand48() < likelihood || currentTime - timeOfLastObstacle > maximumTimeBetweenObstacles {
-                let groundObstacle: GroundObstacle
-                if drand48() < 0.5 {
-                    groundObstacle = DivotObstacle()
-                } else {
-                    groundObstacle = ProtrudingObstacle()
+        // Spawn enemies, after the first 4 seconds
+        if totalTime > 4.0 {
+            // If available, randomly spawn protruding obstacle
+            if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
+                let likelihood = likelihoodOfGroundObstacleSpawn * timeElapsed
+                if drand48() < likelihood || currentTime - timeOfLastObstacle > maximumTimeBetweenObstacles {
+                    let groundObstacle: GroundObstacle
+                    if drand48() < 0.5 {
+                        groundObstacle = DivotObstacle()
+                    } else {
+                        groundObstacle = ProtrudingObstacle()
+                    }
+                    addChild(groundObstacle)
+                    groundObstacle.beginMarch()
+                    timeOfLastObstacle = currentTime
                 }
-                addChild(groundObstacle)
-                groundObstacle.beginMarch()
-                timeOfLastObstacle = currentTime
             }
-        }
-        
-        // Randomly spawn flying pan
-        let probSpawn = likelihoodOfFlyingPanSpawn * timeElapsed   // prob. of new spawn in this update
-        if probSpawn > drand48() {
-            let flyingPan = FlyingPan()
-            addChild(flyingPan)
-            flyingPan.spawn()
-        }
-        
-        if likelihoodOfFlyingPanSpawn <= 0.1 {
-            likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
-        } else if likelihoodOfFlyingPanSpawn <= 1.0 {
-            likelihoodOfFlyingPanSpawn += timeElapsed / 200.0
+            
+            // Randomly spawn flying pan
+            let probSpawn = likelihoodOfFlyingPanSpawn * timeElapsed   // prob. of new spawn in this update
+            if probSpawn > drand48() {
+                let flyingPan = FlyingPan()
+                addChild(flyingPan)
+                flyingPan.spawn()
+            }
+            
+            if likelihoodOfFlyingPanSpawn <= 0.1 {
+                likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
+            } else if likelihoodOfFlyingPanSpawn <= 1.0 {
+                likelihoodOfFlyingPanSpawn += timeElapsed / 200.0
+            }
         }
         
         lastTime = currentTime
