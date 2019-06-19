@@ -29,6 +29,7 @@ class KTSpriteNode: SKSpriteNode {
         self.physicsBody!.categoryBitMask = PhysicsCategory.None
         self.physicsBody!.collisionBitMask = PhysicsCategory.None
         self.physicsBody!.contactTestBitMask = PhysicsCategory.None
+        self.removeAllActions()
         
         // Change textures if applicable
         if exitImageRootName != nil {

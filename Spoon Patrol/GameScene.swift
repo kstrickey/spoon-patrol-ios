@@ -69,7 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         groundSize = CGSize(width: size.width, height: groundHeight)
-        ground = SKShapeNode(rectOf: groundSize)
+        ground = Ground(rectOf: groundSize)
         ground.fillColor = groundColor
         
         patroller = Patroller()
@@ -106,6 +106,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         ground.physicsBody = SKPhysicsBody(rectangleOf: groundSize)
         ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
         ground.physicsBody!.collisionBitMask = PhysicsCategory.AnyFriendly
+        ground.physicsBody!.contactTestBitMask = PhysicsCategory.None
         ground.physicsBody!.affectedByGravity = false
         ground.physicsBody!.pinned = true
         ground.physicsBody!.allowsRotation = false
@@ -151,6 +152,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.run(SKAction.playSoundFileNamed("blop.wav", waitForCompletion: false))
             }
         }
+        
+        // Flying pancake contacted ground
+        else if contact.bodyA.node is PancakeBomb && contact.bodyB.node is Ground {
+            (contact.bodyA.node as! PancakeBomb).beginMarch()
+        } else if contact.bodyB.node is PancakeBomb && contact.bodyA.node is Ground {
+            (contact.bodyB.node as! PancakeBomb).beginMarch()
+        }
+        
     }
     
     
@@ -200,7 +209,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if likelihoodOfFlyingPanSpawn <= 0.1 {
             likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
         } else if likelihoodOfFlyingPanSpawn <= 1.0 {
-            likelihoodOfFlyingPanSpawn += timeElapsed / 100.0
+            likelihoodOfFlyingPanSpawn += timeElapsed / 200.0
         }
         
         lastTime = currentTime

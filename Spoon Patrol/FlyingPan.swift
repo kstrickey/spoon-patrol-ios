@@ -15,7 +15,15 @@ class FlyingPan: KTSpriteNode {
     let numberOfTextures = 1
     let texturePeriod = 1.0
     
-     init() {
+    var shootingAnimationTextures: [SKTexture]      // set the number, etc. in init
+    let shootingAnimationPeriod = 0.7
+    
+    init() {
+        shootingAnimationTextures = [SKTexture]()
+        for i in 0..<1 {
+            shootingAnimationTextures.append(SKTexture(imageNamed: "flying pan shooting \(i)"))
+        }
+        
         super.init(texture: .none, color: UIColor(), size: CGSize(width: 100, height: 20))
         
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
@@ -67,7 +75,26 @@ class FlyingPan: KTSpriteNode {
         
         self.run(SKAction.repeatForever(SKAction.sequence(actionSequence)))
         
-        
+        // Preset the firing of pancakes
+        var firingSequence = [SKAction]()
+        for _ in 0...10 {
+            firingSequence.append(SKAction.wait(forDuration: 1.0 + 7.0 * drand48()))
+            firingSequence.append(SKAction.run(firePancake))
+        }
+        self.run(SKAction.repeatForever(SKAction.sequence(firingSequence)))
+    }
+    
+    func firePancake() {
+        // Fires a pancake, if positioned appropriately
+        if self.position.x < self.scene!.size.width && self.position.x > self.size.width {
+            let pcb = PancakeBomb()
+            self.scene!.addChild(pcb)
+            pcb.spawnAt(position: self.position)
+            
+            // Animate pan in throwing motion
+            
+            self.run(SKAction.animate(with: shootingAnimationTextures, timePerFrame: shootingAnimationPeriod))
+        }
     }
     
     override func diesBySpoon() -> Bool {
