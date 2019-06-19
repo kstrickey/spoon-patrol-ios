@@ -49,4 +49,9 @@ class KTSpriteNode: SKSpriteNode {
         self.run(SKAction.sequence([gravityAction, removeAction]))
     }
     
+    func diesBySpoon() -> Bool {
+        // Override function. Must return a Bool indicating whether it dies upon contact with FriendlySpoon.
+        return false
+    }
+    
 }

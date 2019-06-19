@@ -30,4 +30,8 @@ class ProtrudingObstacle: GroundObstacle {
         self.run(SKAction.sequence([obstacleAction, SKAction.removeFromParent()]))
     }
     
+    override func diesBySpoon() -> Bool {
+        return true
+    }
+    
 }

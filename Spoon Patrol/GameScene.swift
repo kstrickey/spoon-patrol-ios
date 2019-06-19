@@ -77,7 +77,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         lastTime = 0
         
         timeOfLastObstacle = minimumTimeBetweenObstacles
-        likelihoodOfObstacleSpawn = 0.3
+        likelihoodOfGroundObstacleSpawn = 0.3
+        
+        likelihoodOfFlyingPanSpawn = 0.0
         
         super.init(size: size)
         
@@ -140,9 +142,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
             
-            // FriendlySpoon contacted something
-        else if contact.bodyA.node is FriendlySpoon || contact.bodyB.node is FriendlySpoon {
-            if contact.bodyA.node is ProtrudingObstacle || contact.bodyB.node is ProtrudingObstacle {
+        // FriendlySpoon contacted something
+        else if (contact.bodyA.node is FriendlySpoon && contact.bodyB.node is KTSpriteNode) || (contact.bodyB.node is FriendlySpoon && contact.bodyA.node is KTSpriteNode) {
+            if (contact.bodyA.node as! KTSpriteNode).diesBySpoon() || (contact.bodyB.node as! KTSpriteNode).diesBySpoon() {
                 // Both die spinning
                 (contact.bodyA.node! as! KTSpriteNode).exitWithSpinningParabola()
                 (contact.bodyB.node! as! KTSpriteNode).exitWithSpinningParabola()
@@ -156,18 +158,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var timeOfLastObstacle: CFTimeInterval
     let minimumTimeBetweenObstacles = 1.0
+    let maximumTimeBetweenObstacles = 6.0
     
-    var likelihoodOfObstacleSpawn: Double   // between 0 and 1, per second
+    var likelihoodOfGroundObstacleSpawn: Double     // between 0 and 1, units per second
+    
+    var likelihoodOfFlyingPanSpawn: Double          // between 0 and 1, units per second (on average)
     
     override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
         
+        if lastTime == 0.0 {       // first iteration, lastTime has not been set yet
+            lastTime = currentTime
+            return
+        }
         let timeElapsed = currentTime - lastTime
         
         // If available, randomly spawn protruding obstacle
         if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
-            let likelihood = likelihoodOfObstacleSpawn * timeElapsed
-            if drand48() < likelihood {
+            let likelihood = likelihoodOfGroundObstacleSpawn * timeElapsed
+            if drand48() < likelihood || currentTime - timeOfLastObstacle > maximumTimeBetweenObstacles {
                 let groundObstacle: GroundObstacle
                 if drand48() < 0.5 {
                     groundObstacle = DivotObstacle()
@@ -180,6 +189,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
+        // Randomly spawn flying pan
+        let probSpawn = likelihoodOfFlyingPanSpawn * timeElapsed   // prob. of new spawn in this update
+        if probSpawn > drand48() {
+            let flyingPan = FlyingPan()
+            addChild(flyingPan)
+            flyingPan.spawn()
+        }
+        
+        if likelihoodOfFlyingPanSpawn <= 0.1 {
+            likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
+        } else if likelihoodOfFlyingPanSpawn <= 1.0 {
+            likelihoodOfFlyingPanSpawn += timeElapsed / 100.0
+        }
         
         lastTime = currentTime
         

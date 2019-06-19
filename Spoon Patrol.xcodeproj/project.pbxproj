@@ -21,7 +21,7 @@
 		0A9E141122B871DE0039700D /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141022B871DE0039700D /* GameOverScene.swift */; };
 		0A9E141322B8721B0039700D /* KTSpriteNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141222B8721B0039700D /* KTSpriteNode.swift */; };
 		0A9E141722B872550039700D /* ProtrudingObstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141422B872550039700D /* ProtrudingObstacle.swift */; };
-		0A9E141822B872550039700D /* UFO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141522B872550039700D /* UFO.swift */; };
+		0A9E141822B872550039700D /* FlyingPan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141522B872550039700D /* FlyingPan.swift */; };
 		0A9E141922B872550039700D /* Patroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141622B872550039700D /* Patroller.swift */; };
 		0A9E141B22B872B50039700D /* FriendlySpoon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E141A22B872B50039700D /* FriendlySpoon.swift */; };
 		0A9E141E22B872EE0039700D /* blop.wav in Resources */ = {isa = PBXBuildFile; fileRef = 0A9E141C22B872EE0039700D /* blop.wav */; };
@@ -68,7 +68,7 @@
 		0A9E141022B871DE0039700D /* GameOverScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		0A9E141222B8721B0039700D /* KTSpriteNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KTSpriteNode.swift; sourceTree = "<group>"; };
 		0A9E141422B872550039700D /* ProtrudingObstacle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProtrudingObstacle.swift; sourceTree = "<group>"; };
-		0A9E141522B872550039700D /* UFO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UFO.swift; sourceTree = "<group>"; };
+		0A9E141522B872550039700D /* FlyingPan.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlyingPan.swift; sourceTree = "<group>"; };
 		0A9E141622B872550039700D /* Patroller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Patroller.swift; sourceTree = "<group>"; };
 		0A9E141A22B872B50039700D /* FriendlySpoon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendlySpoon.swift; sourceTree = "<group>"; };
 		0A9E141C22B872EE0039700D /* blop.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = blop.wav; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 				0A9E142222B8735B0039700D /* GroundObstacle.swift */,
 				0A9E142022B873400039700D /* DivotObstacle.swift */,
 				0A9E141422B872550039700D /* ProtrudingObstacle.swift */,
-				0A9E141522B872550039700D /* UFO.swift */,
+				0A9E141522B872550039700D /* FlyingPan.swift */,
 				0A9E141C22B872EE0039700D /* blop.wav */,
 				0A9E141D22B872EE0039700D /* March of the Spoons.mp3 */,
 				0A9E13E422B7E2440039700D /* Main.storyboard */,
@@ -310,7 +310,7 @@
 				0A9E13E322B7E2440039700D /* GameViewController.swift in Sources */,
 				0A9E13DB22B7E2440039700D /* AppDelegate.swift in Sources */,
 				0A9E142122B873400039700D /* DivotObstacle.swift in Sources */,
-				0A9E141822B872550039700D /* UFO.swift in Sources */,
+				0A9E141822B872550039700D /* FlyingPan.swift in Sources */,
 				0A9E141B22B872B50039700D /* FriendlySpoon.swift in Sources */,
 				0A9E140F22B871A60039700D /* TitleScene.swift in Sources */,
 				0A9E142322B8735B0039700D /* GroundObstacle.swift in Sources */,
