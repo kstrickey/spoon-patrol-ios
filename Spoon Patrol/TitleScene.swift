@@ -15,7 +15,7 @@ class TitleScene: SKScene {
         backgroundColor = SKColor.black
         
         let title = SKLabelNode(fontNamed: "Chalkduster")
-        title.text = "MOON PATROL"
+        title.text = "SPOON PATROL"
         title.fontSize = 50
         title.fontColor = SKColor.white
         title.position = CGPoint(x: size.width / 2, y: size.height / 2)

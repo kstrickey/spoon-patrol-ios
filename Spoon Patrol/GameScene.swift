@@ -6,8 +6,11 @@
 //  Copyright (c) 2017 Casual Programmer. All rights reserved.
 //
 
+import CoreMotion
 import SpriteKit
 import AVFoundation
+
+var motionManager: CMMotionManager!
 
 var backgroundMusicPlayer: AVAudioPlayer!
 
@@ -62,6 +65,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     let scoreboard: SKLabelNode
     
+    var tiltForce: CGVector
+    
     override init(size: CGSize) {
         if !AVAudioSession.sharedInstance().isOtherAudioPlaying {
             playingMusic = true
@@ -70,11 +75,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             playingMusic = false
         }
         
+        motionManager = CMMotionManager()
+        motionManager.startAccelerometerUpdates()
+        
         groundSize = CGSize(width: size.width, height: groundHeight)
         ground = Ground(rectOf: groundSize)
         ground.fillColor = groundColor
         
         patroller = Patroller()
+        
+        tiltForce = CGVector(dx: 0, dy: 0)
         
         lastTime = 0.0
         totalTime = 0.0
@@ -199,6 +209,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         totalTime += timeElapsed
         
         scoreboard.text = "   Meters patrolled: \(Double(round(10*totalTime)/10))"
+        
+        // Incorporate tilt
+        if let accelerometerData = motionManager.accelerometerData {
+            tiltForce.dx = CGFloat(-accelerometerData.acceleration.y * 70.0)
+        }
+        patroller.run(SKAction.applyForce(tiltForce, duration: timeElapsed))
+        
+        // Ensure patroller does not run off side
+        if patroller.position.x < patroller.size.width {
+            patroller.position.x = patroller.size.width
+        } else if patroller.position.x > self.size.width - patroller.size.width {
+            patroller.position.x = self.size.width - patroller.size.width
+        }
         
         // If available, randomly spawn protruding obstacle
         if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
