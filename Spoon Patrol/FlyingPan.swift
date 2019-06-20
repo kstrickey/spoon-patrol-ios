@@ -92,8 +92,10 @@ class FlyingPan: KTSpriteNode {
             pcb.spawnAt(position: self.position)
             
             // Animate pan in throwing motion
-            
             self.run(SKAction.animate(with: shootingAnimationTextures, timePerFrame: shootingAnimationPeriod))
+            
+            // Sound effect
+            self.run(SKAction.playSoundFileNamed("arrow.wav", waitForCompletion: false))
         }
     }
     

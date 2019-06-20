@@ -14,7 +14,7 @@ var motionManager: CMMotionManager!
 
 var backgroundMusicPlayer: AVAudioPlayer!
 
-func playBackgroundMusic(_ filename: String) {
+func playBackgroundMusic(filename: String) {
     let url = Bundle.main.url(forResource: filename, withExtension: nil)
     if (url == nil) {
         print("Could not find file: \(filename)")
@@ -70,7 +70,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override init(size: CGSize) {
         if !AVAudioSession.sharedInstance().isOtherAudioPlaying {
             playingMusic = true
-            playBackgroundMusic("happy happy game show.mp3")
+            playBackgroundMusic(filename: "happy happy game show.mp3")
         } else {
             playingMusic = false
         }
@@ -286,7 +286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if playingMusic {
             backgroundMusicPlayer.stop()
         }
-        let gameOverScene = GameOverScene(size: self.size)
+        let gameOverScene = GameOverScene(size: self.size, score: self.totalTime, playingMusic: playingMusic)
         self.view!.presentScene(gameOverScene)
     }
     

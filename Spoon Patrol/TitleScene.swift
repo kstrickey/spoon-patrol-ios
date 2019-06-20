@@ -18,8 +18,13 @@ class TitleScene: SKScene {
         title.text = "SPOON PATROL"
         title.fontSize = 50
         title.fontColor = SKColor.white
-        title.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        title.position = CGPoint(x: size.width / 2, y: size.height / 3 * 2)
         addChild(title)
+        
+        let patroller = Patroller(baseX: size.width / 2)
+        self.addChild(patroller)
+        patroller.begin(groundHeight: size.height / 4)
+        patroller.physicsBody!.isDynamic = false
         
     }
     

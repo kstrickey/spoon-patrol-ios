@@ -61,7 +61,7 @@ class Patroller: KTSpriteNode {
     func begin(groundHeight: CGFloat) {
         self.zPosition = 1000
         self.position = CGPoint(x: baseX, y: groundHeight + self.size.height / 2 + 1)
-        self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.width / 2)
+        self.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: self.size.width/2, height: self.size.height*4/5), center: CGPoint(x: -self.size.width/8, y: 0.0))
         self.physicsBody!.allowsRotation = false
         self.physicsBody!.categoryBitMask = PhysicsCategory.Patroller
         self.physicsBody!.collisionBitMask = PhysicsCategory.AnyObstacle
@@ -87,6 +87,9 @@ class Patroller: KTSpriteNode {
                 rightSpoon.fire(patrollerPosition: self.position, patrollerSize: self.size)
                 timeOfLastForwardShot = currentTime
             }
+            
+            // Sound effect
+            self.run(SKAction.playSoundFileNamed("pop cork.wav", waitForCompletion: false))
         }
     }
     
