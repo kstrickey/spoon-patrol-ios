@@ -9,15 +9,24 @@
 import Foundation
 import SpriteKit
 
-class FriendlySpoon: KTSpriteNode {
+class FriendlyUtensil: KTSpriteNode {
     
     let facingUp: Bool
     
-    let spoonSpeed = 300.0       // points per second
+    let utensilSpeed = 300.0       // points per second
     
     init(facingUp: Bool) {
         self.facingUp = facingUp
-        super.init(texture: SKTexture(imageNamed: "spoon"), color: UIColor(), size: CGSize(width: 50, height: 10))
+        var name: String
+        let rand = Int.random(in: 0 ..< 3)
+        if rand == 0 {
+            name = "utensil A"
+        } else if rand == 1 {
+            name = "utensil B"
+        } else {
+            name = "utensil C"
+        }
+        super.init(texture: SKTexture(imageNamed: name), color: UIColor(), size: CGSize(width: 50, height: 10))
         
         self.size = CGSize(width: 50, height: 10)
         self.zPosition = 500
@@ -40,12 +49,12 @@ class FriendlySpoon: KTSpriteNode {
             self.zRotation = CGFloat(Double.pi / 2)
             self.position = CGPoint(x: patrollerPosition.x, y: patrollerPosition.y)
             let dist = self.scene!.size.height - self.position.y + self.size.height
-            self.run(SKAction.sequence([SKAction.moveTo(y: self.position.y + dist, duration: Double(dist) / spoonSpeed), SKAction.removeFromParent()]))
+            self.run(SKAction.sequence([SKAction.moveTo(y: self.position.y + dist, duration: Double(dist) / utensilSpeed), SKAction.removeFromParent()]))
         } else {
             self.position = CGPoint(x: patrollerPosition.x, y: patrollerPosition.y + patrollerSize.height / 3)
             self.physicsBody!.velocity = CGVector(dx: 0, dy: 10)
             let dist = self.scene!.size.width - self.position.x + self.size.width
-            self.run(SKAction.sequence([SKAction.group([SKAction.applyForce(CGVector(dx: 0, dy: -15), duration: Double(dist) / spoonSpeed), SKAction.moveTo(x: self.position.x + dist, duration: Double(dist) / spoonSpeed)]), SKAction.removeFromParent()]))
+            self.run(SKAction.sequence([SKAction.group([SKAction.applyForce(CGVector(dx: 0, dy: -15), duration: Double(dist) / utensilSpeed), SKAction.moveTo(x: self.position.x + dist, duration: Double(dist) / utensilSpeed)]), SKAction.removeFromParent()]))
         }
     }
     

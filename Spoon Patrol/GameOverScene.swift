@@ -13,8 +13,13 @@ class GameOverScene: SKScene {
     
     var playingMusic: Bool
     
+    var startTime: Date
+    let enforcedDelay = 1.0 // seconds that must pass before user can advance (to prevent accidental advancement after spamming)
+    
     init(size: CGSize, score: Double, playingMusic: Bool) {
         self.playingMusic = playingMusic
+        
+        self.startTime = Date()
         
         super.init(size: size)
         
@@ -51,6 +56,18 @@ class GameOverScene: SKScene {
         highscoreLabel.position = CGPoint(x: size.width/4*3, y: patroller.position.y)
         addChild(highscoreLabel)
         
+        if youLose.fontSize + credits.size.height + patroller.size.height + 30 >= self.size.height {
+            // Rearrange
+            print("Rearranging")
+            youLose.fontSize += 10
+            youLose.position.x = scoreLabel.position.x
+            youLose.position.y -= 25
+            patroller.position.y -= 20
+            patroller.setScale(patroller.xScale * 0.8)
+            scoreLabel.position.x = highscoreLabel.position.x
+            highscoreLabel.position.y = scoreLabel.position.y - 30
+        }
+        
         if score > highscore {
             highscoreLabel.text = "Prev. best:\n\(highscore) meters"
             youLose.text = "New best!"
@@ -60,6 +77,8 @@ class GameOverScene: SKScene {
         if playingMusic {
             playBackgroundMusic(filename: "thief in the night.mp3")
         }
+        
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -67,10 +86,12 @@ class GameOverScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if playingMusic {
-            backgroundMusicPlayer.stop()
+        if -startTime.timeIntervalSinceNow > enforcedDelay {
+            if playingMusic {
+                backgroundMusicPlayer.stop()
+            }
+            self.view!.presentScene(TitleScene(size: self.size))
         }
-        self.view!.presentScene(TitleScene(size: self.size))
     }
     
 }

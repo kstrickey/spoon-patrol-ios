@@ -9,8 +9,16 @@
 import Foundation
 import SpriteKit
 
-class Ground: SKShapeNode {
+class Ground: SKSpriteNode {
     
-    // Used for identification purposes and possible future extension
+    init(groundWidth: CGFloat, groundHeight: CGFloat) {
+        super.init(texture: SKTexture(imageNamed: "granite"), color: UIColor(), size: CGSize(width: groundWidth, height: groundHeight))
+        
+        
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
 }

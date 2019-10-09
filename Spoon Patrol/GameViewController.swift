@@ -20,7 +20,7 @@ class GameViewController: UIViewController {
             started = true
             let scene = TitleScene(size: view.bounds.size)
             let skView = view as! SKView
-            skView.showsPhysics = true
+//            skView.showsPhysics = true
             skView.ignoresSiblingOrder = true
             scene.scaleMode = .resizeFill
             skView.presentScene(scene)

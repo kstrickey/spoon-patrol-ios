@@ -55,11 +55,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var started: Bool = false
     let playingMusic: Bool
+    var locked: Bool = false  // becomes locked after you lose (no more firing or score collecting)
     
     let groundHeight: CGFloat = 80
-    let groundSize: CGSize
-    let ground: SKShapeNode
-    let groundColor: UIColor = UIColor.green
+    let ground: Ground
+    let groundSpeed: CGFloat = 200
     
     let patroller: Patroller
     
@@ -78,9 +78,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         motionManager = CMMotionManager()
         motionManager.startAccelerometerUpdates()
         
-        groundSize = CGSize(width: size.width, height: groundHeight)
-        ground = Ground(rectOf: groundSize)
-        ground.fillColor = groundColor
+        ground = Ground(groundWidth: 2*size.width, groundHeight: self.groundHeight)
         
         patroller = Patroller()
         
@@ -98,7 +96,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         super.init(size: size)
         
-        self.backgroundColor = UIColor.lightGray
+        self.backgroundColor = UIColor(red: 0.3961, green: 0.949, blue: 0.9686, alpha: 1.0)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -117,22 +115,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         
         // Ground
-        ground.position = CGPoint(x: self.size.width / 2, y: groundHeight / 2.0)
-        ground.physicsBody = SKPhysicsBody(rectangleOf: groundSize)
+        ground.position = CGPoint(x: ground.size.width / 2, y: groundHeight / 2.0)
+        ground.zPosition = -999
+        ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size)
         ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
         ground.physicsBody!.collisionBitMask = PhysicsCategory.AnyFriendly
         ground.physicsBody!.contactTestBitMask = PhysicsCategory.None
         ground.physicsBody!.affectedByGravity = false
-        ground.physicsBody!.pinned = true
         ground.physicsBody!.allowsRotation = false
+        ground.constraints = [SKConstraint.positionY(SKRange(constantValue: groundHeight / 2.0))]
         addChild(ground)
+        ground.run(SKAction.repeatForever(scrollSprite(ground: ground)))
         
         // Scoreboard
         scoreboard.fontSize = 25
         scoreboard.fontColor = UIColor.black
-        scoreboard.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        scoreboard.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.center
         scoreboard.verticalAlignmentMode = SKLabelVerticalAlignmentMode.bottom
-        scoreboard.position = CGPoint(x: 0, y: 0)
+        scoreboard.position = CGPoint(x: self.size.width/2, y: 0)
         scoreboard.zPosition = CGFloat.greatestFiniteMagnitude
         addChild(scoreboard)
         
@@ -163,15 +163,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         started = true
     }
     
+    func scrollSprite(ground: SKSpriteNode) -> SKAction {
+        let move = SKAction.moveTo(x: self.size.width - ground.size.width/2, duration: TimeInterval(ground.size.width / groundSpeed))
+        let reset = SKAction.run { () -> Void in
+            ground.position.x = ground.size.width/2
+        }
+        return SKAction.sequence([move, reset])
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Called when a touch begins */
-        let touch = touches.first!
-        let location = touch.location(in: self)
-        
-        if location.x < self.size.width / 2 {
-            patroller.jump()
-        } else {
-            patroller.attemptShot(currentTime: lastTime)
+        if !locked {
+            let touch = touches.first!
+            let location = touch.location(in: self)
+            
+            if location.x < self.size.width / 2 {
+                patroller.jump()
+            } else {
+                patroller.attemptShot(currentTime: lastTime)
+            }
         }
         
     }
@@ -188,7 +198,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
             
         // FriendlySpoon contacted something
-        else if (contact.bodyA.node is FriendlySpoon && contact.bodyB.node is KTSpriteNode) || (contact.bodyB.node is FriendlySpoon && contact.bodyA.node is KTSpriteNode) {
+        else if (contact.bodyA.node is FriendlyUtensil && contact.bodyB.node is KTSpriteNode) || (contact.bodyB.node is FriendlyUtensil && contact.bodyA.node is KTSpriteNode) {
             if (contact.bodyA.node as! KTSpriteNode).diesBySpoon() || (contact.bodyB.node as! KTSpriteNode).diesBySpoon() {
                 // Both die spinning
                 (contact.bodyA.node! as! KTSpriteNode).exitWithSpinningParabola()
@@ -226,54 +236,59 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         }
         let timeElapsed = currentTime - lastTime
-        totalTime += timeElapsed
-        
-        scoreboard.text = "   Meters patrolled: \(Double(round(10*totalTime)/10))"
-        
-        // Incorporate tilt
-        if let accelerometerData = motionManager.accelerometerData {
-            tiltForce.dx = CGFloat(-accelerometerData.acceleration.y * 120.0)
-        }
-        patroller.run(SKAction.applyForce(tiltForce, duration: timeElapsed))
-        
-        // Ensure patroller does not run off side
-        if patroller.position.x < patroller.size.width {
-            patroller.position.x = patroller.size.width
-        } else if patroller.position.x > self.size.width - patroller.size.width {
-            patroller.position.x = self.size.width - patroller.size.width
-        }
-        
-        // Spawn enemies, after the first 4 seconds
-        if totalTime > 4.0 {
-            // If available, randomly spawn protruding obstacle
-            if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
-                let likelihood = likelihoodOfGroundObstacleSpawn * timeElapsed
-                if drand48() < likelihood || currentTime - timeOfLastObstacle > maximumTimeBetweenObstacles {
-                    let groundObstacle: GroundObstacle
-                    if drand48() < 0.5 {
-                        groundObstacle = DivotObstacle()
-                    } else {
-                        groundObstacle = ProtrudingObstacle()
+        if !self.locked {
+            totalTime += timeElapsed
+            
+            scoreboard.text = "   Meters patrolled: \(Double(round(10*totalTime)/10))"
+            
+            // Incorporate tilt
+            if let accelerometerData = motionManager.accelerometerData {
+                tiltForce.dx = CGFloat(-accelerometerData.acceleration.y * 120.0)
+            }
+            if !((patroller.position.x < patroller.size.width && tiltForce.dx < 0) || (patroller.position.x > self.size.width - patroller.size.width && tiltForce.dx > 0)) {
+                patroller.run(SKAction.applyForce(tiltForce, duration: timeElapsed))
+            }
+            
+            // Ensure patroller does not run off side
+            if patroller.position.x < patroller.size.width {
+                patroller.position.x = patroller.size.width
+            } else if patroller.position.x > self.size.width - patroller.size.width {
+                patroller.position.x = self.size.width - patroller.size.width
+            }
+            
+            // Spawn enemies, after the first 4 seconds
+            if totalTime > 4.0 {
+                // If available, randomly spawn protruding obstacle
+                if currentTime - timeOfLastObstacle >= minimumTimeBetweenObstacles {
+                    let likelihood = likelihoodOfGroundObstacleSpawn * timeElapsed
+                    if drand48() < likelihood || currentTime - timeOfLastObstacle > maximumTimeBetweenObstacles {
+                        let groundObstacle: GroundObstacle
+                        if drand48() < 0.5 {
+                            groundObstacle = DivotObstacle()
+                        } else {
+                            groundObstacle = ProtrudingObstacle()
+                        }
+                        addChild(groundObstacle)
+                        groundObstacle.beginMarch()
+                        timeOfLastObstacle = currentTime
                     }
-                    addChild(groundObstacle)
-                    groundObstacle.beginMarch()
-                    timeOfLastObstacle = currentTime
+                }
+                
+                // Randomly spawn flying pan
+                let probSpawn = likelihoodOfFlyingPanSpawn * timeElapsed   // prob. of new spawn in this update
+                if probSpawn > drand48() {
+                    let flyingPan = FlyingPan()
+                    addChild(flyingPan)
+                    flyingPan.spawn()
+                }
+                
+                if likelihoodOfFlyingPanSpawn <= 0.1 {
+                    likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
+                } else if likelihoodOfFlyingPanSpawn <= 1.0 {
+                    likelihoodOfFlyingPanSpawn += timeElapsed / 200.0
                 }
             }
             
-            // Randomly spawn flying pan
-            let probSpawn = likelihoodOfFlyingPanSpawn * timeElapsed   // prob. of new spawn in this update
-            if probSpawn > drand48() {
-                let flyingPan = FlyingPan()
-                addChild(flyingPan)
-                flyingPan.spawn()
-            }
-            
-            if likelihoodOfFlyingPanSpawn <= 0.1 {
-                likelihoodOfFlyingPanSpawn += timeElapsed / 300.0
-            } else if likelihoodOfFlyingPanSpawn <= 1.0 {
-                likelihoodOfFlyingPanSpawn += timeElapsed / 200.0
-            }
         }
         
         lastTime = currentTime
@@ -286,8 +301,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if playingMusic {
             backgroundMusicPlayer.stop()
         }
-        let gameOverScene = GameOverScene(size: self.size, score: self.totalTime, playingMusic: playingMusic)
-        self.view!.presentScene(gameOverScene)
+        
+        self.locked = true
+        self.physicsWorld.speed = 0.4
+        self.patroller.exitWithSpinningParabola()
+        
+        self.run(SKAction.playSoundFileNamed("you lose voice.mp3", waitForCompletion: true), completion: {
+            let gameOverScene = GameOverScene(size: self.size, score: self.totalTime, playingMusic: self.playingMusic)
+            self.view!.presentScene(gameOverScene)
+        })
+        
+        
     }
     
 }

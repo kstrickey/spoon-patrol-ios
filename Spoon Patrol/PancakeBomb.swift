@@ -16,7 +16,7 @@ class PancakeBomb: GroundObstacle {
     let projectileTexturePeriod = 1.0
     
     let groundRootName = "ground pancake"
-    let groundNumberOfTextures = 1
+    let groundNumberOfTextures = 2
     let groundTexturePeriod = 1.0
     
     var isStillProjectile = true            // becomes false when hits ground

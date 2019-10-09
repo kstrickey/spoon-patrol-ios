@@ -12,7 +12,7 @@ import SpriteKit
 class FlyingPan: KTSpriteNode {
     
     let rootName = "flying pan"
-    let numberOfTextures = 1
+    let numberOfTextures = 2
     let texturePeriod = 1.0
     
     var shootingAnimationTextures: [SKTexture]      // set the number, etc. in init
@@ -24,7 +24,7 @@ class FlyingPan: KTSpriteNode {
             shootingAnimationTextures.append(SKTexture(imageNamed: "flying pan shooting \(i)"))
         }
         
-        super.init(texture: .none, color: UIColor(), size: CGSize(width: 100, height: 20))
+        super.init(texture: .none, color: UIColor(), size: CGSize(width: 140, height: 28))
         
         self.physicsBody = SKPhysicsBody(rectangleOf: self.size)
         self.physicsBody!.affectedByGravity = false
